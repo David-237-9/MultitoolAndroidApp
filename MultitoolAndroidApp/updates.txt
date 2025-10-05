@@ -3,6 +3,7 @@ This file contains the history of the changes made to the application.
 
 
 ----- 05/10/2025 -----
-- Application created and working
+- Application created and working;
+- Created a camera activity and screen
 
 -----------------------------

@@ -40,6 +40,18 @@ android {
 }
 
 dependencies {
+    // CameraX core library using the camera2 implementation
+    val cameraxVersion = "1.5.0"
+    // The following line is optional, as the core library is included indirectly by camera-camera2
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+
+    // Optional - CameraX Lifecycle Library
+    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+    // implementation("androidx.camera:camera-video:${cameraxVersion}")
+    implementation("androidx.camera:camera-view:${cameraxVersion}")
+    // implementation("androidx.camera:camera-mlkit-vision:${cameraxVersion}")
+    // implementation("androidx.camera:camera-extensions:${cameraxVersion}")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

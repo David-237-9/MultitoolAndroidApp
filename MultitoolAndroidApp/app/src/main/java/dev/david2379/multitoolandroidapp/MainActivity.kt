@@ -1,47 +1,29 @@
 package dev.david2379.multitoolandroidapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import dev.david2379.multitoolandroidapp.logic.camera.CameraActivity
+import dev.david2379.multitoolandroidapp.ui.MainScreen
 import dev.david2379.multitoolandroidapp.ui.theme.MultitoolAndroidAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val navigateToCameraIntent: Intent by lazy {
+            Intent(this, CameraActivity::class.java)
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MultitoolAndroidAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                MainScreen(
+                    onCameraNavigate = { startActivity(navigateToCameraIntent) },
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MultitoolAndroidAppTheme {
-        Greeting("Android")
     }
 }
