@@ -21,7 +21,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             MultitoolAndroidAppTheme {
                 MainScreen(
-                    onCameraNavigate = { startActivity(navigateToCameraIntent) },
+                    navigates = listOf(
+                        Pair("Camera") { startActivity(navigateToCameraIntent) },
+                    ),
                 )
             }
         }
