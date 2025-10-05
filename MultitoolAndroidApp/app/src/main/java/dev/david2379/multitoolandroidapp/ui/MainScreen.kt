@@ -24,8 +24,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.david2379.multitoolandroidapp.R
 
-val itemTextColor = Color.White
-val itemBackgroundColor = Color(215, 0, 0)
+val appNameTextColor = Color.White
+val buttonsTextColor = appNameTextColor
+val appNameBackgroundColor = Color(215, 0, 0)
+val buttonsBackgroundColor = Color(160, 160, 160)
 
 @Composable
 fun MainScreen(navigates: List<Pair<String, () -> Unit>>) {
@@ -51,8 +53,8 @@ fun MainScreen(navigates: List<Pair<String, () -> Unit>>) {
                         onClick = onClick,
                         modifier = Modifier.padding(8.dp),
                         colors = ButtonColors(
-                            itemBackgroundColor,
-                            itemTextColor,
+                            buttonsBackgroundColor,
+                            buttonsTextColor,
                             Color.DarkGray,
                             Color.Gray
                         ),
@@ -77,12 +79,12 @@ private fun TopBar() {
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
-                .background(itemBackgroundColor)
+                .background(appNameBackgroundColor)
                 .padding(8.dp)
         ) {
             Text(
                 text = "Multitool Android App",
-                color = itemTextColor,
+                color = appNameTextColor,
             )
         }
     }

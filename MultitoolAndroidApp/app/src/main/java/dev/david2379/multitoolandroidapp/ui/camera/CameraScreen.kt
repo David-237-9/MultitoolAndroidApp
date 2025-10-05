@@ -15,21 +15,19 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CameraScreen(onPreviewReady: (PreviewView) -> Unit) {
-    Scaffold { innerPadding ->
-        val context = LocalContext.current
-        val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = {
-                    val previewView = PreviewView(context)
-                    scope.launch(Dispatchers.Main) {
-                        onPreviewReady(previewView)
-                    }
-                    previewView
+    Box(modifier = Modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = {
+                val previewView = PreviewView(context)
+                scope.launch(Dispatchers.Main) {
+                    onPreviewReady(previewView)
                 }
-            )
-        }
+                previewView
+            }
+        )
     }
 }
