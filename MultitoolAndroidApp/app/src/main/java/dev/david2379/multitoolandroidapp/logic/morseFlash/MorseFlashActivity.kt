@@ -34,12 +34,13 @@ class MorseFlashActivity: ComponentActivity() {
             fun startMorseJob() {
                 morseJob?.cancel()
                 morseJob = lifecycleScope.launch(Dispatchers.Default) {
-                    if (state.second) Morse.flashCode(
+                    while (state.second) Morse.flashCode(
                         state.first,
                         { flashHelper.turnOnFlash() },
                         { flashHelper.turnOffFlash() },
                         { !state.second },
-                    ) else morseJob?.cancel()
+                    )
+                    morseJob?.cancel()
                 }
             }
 
