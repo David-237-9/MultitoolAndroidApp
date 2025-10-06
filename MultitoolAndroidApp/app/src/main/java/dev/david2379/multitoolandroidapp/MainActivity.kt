@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dev.david2379.multitoolandroidapp.logic.camera.CameraActivity
+import dev.david2379.multitoolandroidapp.logic.gps.GpsActivity
 import dev.david2379.multitoolandroidapp.logic.morseFlash.MorseFlashActivity
 import dev.david2379.multitoolandroidapp.ui.MainScreen
 import dev.david2379.multitoolandroidapp.ui.theme.MultitoolAndroidAppTheme
@@ -21,6 +22,10 @@ class MainActivity : ComponentActivity() {
             Intent(this, MorseFlashActivity::class.java)
         }
 
+        val navigateToGpsIntent: Intent by lazy {
+            Intent(this, GpsActivity::class.java)
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -29,6 +34,7 @@ class MainActivity : ComponentActivity() {
                     navigates = listOf(
                         Pair("Camera") { startActivity(navigateToCameraIntent) },
                         Pair("Morse Flash") { startActivity(navigateToMorseFlashIntent) },
+                        Pair("GPS") { startActivity(navigateToGpsIntent) },
                     ),
                 )
             }

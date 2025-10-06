@@ -6,6 +6,8 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -30,6 +32,7 @@
         <activity android:name=".logic.camera.CameraActivity" />
         <activity android:name=".logic.morseFlash.MorseFlashActivity" />
         <activity android:name=".logic.morseFlash.ReadMorseFlashActivity" />
+        <activity android:name=".logic.gps.GpsActivity" />
     </application>
 
 </manifest>

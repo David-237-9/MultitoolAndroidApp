@@ -3,7 +3,8 @@ This file contains the history of the changes made to the application.
 
 
 ----- 06/10/2025 -----
-- Created the Morse Flash tool
+- Created the Morse Flash tool;
+- Added the gps functionality from the GPSAndroidApp project
 
 ----- 05/10/2025 -----
 - Application created and working;
