@@ -13,6 +13,7 @@ import dev.david2379.multitoolandroidapp.logic.morseFlash.model.FlashHelper
 import dev.david2379.multitoolandroidapp.logic.morseFlash.model.Morse
 import dev.david2379.multitoolandroidapp.ui.morseFlash.MorseFlashScreen
 import dev.david2379.multitoolandroidapp.ui.theme.MultitoolAndroidAppTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -59,5 +60,12 @@ class MorseFlashActivity: ComponentActivity() {
                 ) { text, active -> setState(text, active) }
             }
         }
+    }
+
+    override fun onDestroy() {
+        morseJob?.cancel()
+        CoroutineScope(Dispatchers.IO).launch { flashHelper.turnOffFlash() }
+
+        super.onDestroy()
     }
 }
