@@ -1,5 +1,6 @@
 package dev.david2379.multitoolandroidapp.logic.morseFlash
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +23,10 @@ class MorseFlashActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val navigateToReadMorseFlashIntent by lazy {
+            Intent(this, ReadMorseFlashActivity::class.java)
+        }
 
         setContent {
             var state by remember { mutableStateOf(Pair("", false)) }
@@ -48,7 +53,8 @@ class MorseFlashActivity: ComponentActivity() {
 
             MultitoolAndroidAppTheme {
                 MorseFlashScreen(
-                    "Morse Flash Tool"
+                    title = "Morse Flash Tool",
+                    onReadMorseFlashNavigate = { startActivity(navigateToReadMorseFlashIntent) },
                 ) { text, active -> setState(text, active) }
             }
         }
