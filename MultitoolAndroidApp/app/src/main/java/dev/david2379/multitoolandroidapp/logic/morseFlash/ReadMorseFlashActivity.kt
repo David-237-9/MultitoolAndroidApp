@@ -15,8 +15,12 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import dev.david2379.multitoolandroidapp.logic.morseFlash.model.MorseFlashDecoder
 import dev.david2379.multitoolandroidapp.ui.morseFlash.ReadMorseFlashScreen
 import dev.david2379.multitoolandroidapp.ui.theme.MultitoolAndroidAppTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -37,14 +41,16 @@ class ReadMorseFlashActivity : ComponentActivity() {
 
         setContent {
             var brightness by remember { mutableDoubleStateOf(0.0) }
+            var decoder by remember { mutableStateOf(MorseFlashDecoder()) }
 
             // Save lambda so CameraX thread can update brightness
             onBrightnessUpdate = { newVal ->
                 brightness = newVal
+                decoder.onBrightnessUpdate(newVal)
             }
 
             MultitoolAndroidAppTheme {
-                ReadMorseFlashScreen("Read Morse Flash", brightness)
+                ReadMorseFlashScreen("Read Morse Flash", brightness, decoder.text)
             }
         }
 
@@ -105,7 +111,7 @@ class ReadMorseFlashActivity : ComponentActivity() {
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-                        runOnUiThread {
+                        lifecycleScope.launch(Dispatchers.Default) {
                             onBrightnessUpdate?.invoke(luma)
                         }
                     })

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 fun ReadMorseFlashScreen(
     title: String,
     brightness: Double,
+    text: String,
 ) {
     Scaffold(
         topBar = { TopBar(title) }
@@ -30,6 +31,7 @@ fun ReadMorseFlashScreen(
                 .fillMaxSize()
         ) {
             Text("Brightness: $brightness")
+            Text("Text: $text")
         }
     }
 }
