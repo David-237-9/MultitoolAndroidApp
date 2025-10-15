@@ -27,12 +27,13 @@ class MorseFlashDecoder {
 //            return
 //        }
 
+        checkForErrors()
+
         // Valid state change
         val currentTime = System.currentTimeMillis()
+        println("TEXT: $text")
         lock.withLock { onStateChange(isOn, currentTime) }
     }
-
-
 
     private fun onStateChange(isOn: Boolean, currentTime: Long) {
         changesTimeList = changesTimeList + currentTime
@@ -95,6 +96,14 @@ class MorseFlashDecoder {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun checkForErrors() {
+        for (i in 0..changesTimeList.size - 3) {
+            if (changesTimeList[i + 2] - changesTimeList[i] < TIME_UNIT / 2) {
+                changesTimeList = changesTimeList.filter { it != changesTimeList[i + 1] && it != changesTimeList[i + 2]}
             }
         }
     }

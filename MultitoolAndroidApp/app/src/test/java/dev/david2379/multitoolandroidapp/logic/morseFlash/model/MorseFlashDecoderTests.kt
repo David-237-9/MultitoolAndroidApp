@@ -11,9 +11,52 @@ class MorseFlashDecoderTests {
         val decoder = MorseFlashDecoder()
         val scope = CoroutineScope(Dispatchers.Default)
         val text = "SOS SOS"
-        val repeat = 4
+        val divide = 4
+        val morse: List<Morse.Signal> = prepareMorse(text)
+
+        // Send signals
+        for (signal in morse) {
+            val brightness = if (signal == Morse.Signal.Dot || signal == Morse.Signal.Dash) 255.0 else 0.0
+            repeat((signal.time * divide) / TIME_UNIT) {
+                scope.launch { decoder.onBrightnessUpdate(brightness) }
+                Thread.sleep(TIME_UNIT / divide.toLong())
+            }
+        }
+
+        // Assert
+        val expected = " $text"
+        assert(decoder.text == expected) { "Expected '$expected' but got '${decoder.text}'" }
+    }
+
+    @Test
+    fun noisyConditionsTest() {
+        val decoder = MorseFlashDecoder()
+        val scope = CoroutineScope(Dispatchers.Default)
+        val text = "SOS SOS"
+        val divide = 2
+        val morse: List<Morse.Signal> = prepareMorse(text)
+
+        // Send signals
+        for (signal in morse) {
+            repeat((signal.time * divide) / TIME_UNIT) {
+                scope.launch {
+                    val brightness = if (signal == Morse.Signal.Dot || signal == Morse.Signal.Dash)
+                        Math.random() * 200 + 55 // between 55 and 255
+                    else
+                        Math.random() * 65 // between 0 and 65
+                    decoder.onBrightnessUpdate(brightness)
+                }
+                Thread.sleep(TIME_UNIT / divide.toLong())
+            }
+        }
+
+        // Assert
+        val expected = " $text"
+        assert(decoder.text == expected) { "Expected '$expected' but got '${decoder.text}'" }
+    }
+
+    private fun prepareMorse(text: String): List<Morse.Signal> {
         val morse: MutableList<Morse.Signal> = mutableListOf()
-        // Generate morse code
         for (i in 0 until text.length) {
             if (text[i] == ' ') morse.add(Morse.Signal.SPACE_WORDS)
             else {
@@ -25,16 +68,6 @@ class MorseFlashDecoderTests {
                 }
             }
         }
-
-        for (signal in morse) {
-            val brightness = if (signal == Morse.Signal.Dot || signal == Morse.Signal.Dash) 255.0 else 0.0
-            repeat((signal.time * repeat) / TIME_UNIT) {
-                scope.launch { decoder.onBrightnessUpdate(brightness) }
-                Thread.sleep(TIME_UNIT / repeat.toLong())
-            }
-        }
-
-        val expected = " $text"
-        assert(decoder.text == expected) { "Expected '$expected' but got '${decoder.text}'" }
+        return morse
     }
 }
