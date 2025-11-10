@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import dev.david2379.multitoolandroidapp.ui.general.TopBar
 
 @Composable
 fun MorseFlashScreen(
@@ -60,27 +61,6 @@ fun MorseFlashScreen(
             ) {
                 Text("Stop")
             }
-        }
-    }
-}
-
-@Composable
-private fun TopBar(title: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(32.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .padding(8.dp)
-        ) {
-            Text(
-                text = title,
-            )
         }
     }
 }
