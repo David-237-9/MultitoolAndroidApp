@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,11 +27,11 @@ import dev.david2379.multitoolandroidapp.ui.general.TopBar
 @Composable
 fun QrCodeScreen(
     title: String,
-    onTextChange: (String) -> Unit,
+    onTextChange: (text: String) -> Unit,
+    correctionLevel: Int,
+    onCorrectionErrorLevelChange: (text: String) -> Unit,
     qrCodeBitmap: Bitmap?,
 ) {
-    var inputText by remember { mutableStateOf("") }
-
     Scaffold(
         topBar = { TopBar(title) }
     ) { innerPadding ->
@@ -40,10 +42,7 @@ fun QrCodeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            TextInput(inputText = inputText) { text ->
-                inputText = text
-                onTextChange(text)
-            }
+            DataInput(onTextChange, correctionLevel, onCorrectionErrorLevelChange)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -53,17 +52,26 @@ fun QrCodeScreen(
 }
 
 @Composable
-private fun TextInput(
-    inputText: String,
-    onTextChange: (String) -> Unit,
+private fun DataInput(
+    onTextChange: (text: String) -> Unit,
+    correctionLevel: Int,
+    onCorrectionErrorLevelChange: (text: String) -> Unit,
 ) {
+    var inputText by remember { mutableStateOf("") }
+
     TextField(
         value = inputText,
-        onValueChange = onTextChange,
+        onValueChange = {
+            inputText = it
+            onTextChange(it)
+        },
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
     )
+    Button(onClick = { onCorrectionErrorLevelChange(inputText) }) {
+        Text("Error Correction: $correctionLevel%")
+    }
 }
 
 @Composable

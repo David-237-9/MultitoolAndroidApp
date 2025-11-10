@@ -6,21 +6,40 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 
 object QrCodeGenerator {
+    val supportedErrorCorrections = listOf(7, 15, 25, 30)
+
     /**
-     * Gera um Bitmap QR code a partir do texto.
-     * @param text conteúdo do QR
-     * @param size largura/altura em pixels (padrão 512)
-     * @param margin margem do QR (padrão 1)
-     * @throws IllegalArgumentException se o texto for vazio
+     * Generates a QR code bitmap from the given text.
+     * @param text The text to encode in the QR code.
+     * @param size The width and height of the generated QR code bitmap in pixels.
+     * @param margin The margin (quiet zone) around the QR code.
+     * @param errorCorrection The error correction level (7%, 15%, 25%, 30%).
+     * @return A Bitmap representing the generated QR code.
+     * @throws IllegalArgumentException if the text is empty or encoding fails.
      */
-    fun generate(text: String, size: Int = 512, margin: Int = 1): Bitmap {
+    fun generate(
+        text: String,
+        size: Int = 512,
+        margin: Int = 1,
+        errorCorrection: Int = 15
+    ): Bitmap {
         require(text.isNotEmpty()) { "text must not be empty" }
+
+        val errorCorrectionLevel = when (errorCorrection) {
+            7 -> ErrorCorrectionLevel.L // 7% error recovery
+            15 -> ErrorCorrectionLevel.M // 15% error recovery
+            25 -> ErrorCorrectionLevel.Q // 25% error recovery
+            30 -> ErrorCorrectionLevel.H // 30% error recovery
+            else -> ErrorCorrectionLevel.M // Default (15% error recovery)
+        }
 
         val hints = mapOf(
             EncodeHintType.CHARACTER_SET to "UTF-8",
-            EncodeHintType.MARGIN to margin
+            EncodeHintType.MARGIN to margin,
+            EncodeHintType.ERROR_CORRECTION to errorCorrectionLevel
         )
 
         val bitMatrix: BitMatrix = try {
