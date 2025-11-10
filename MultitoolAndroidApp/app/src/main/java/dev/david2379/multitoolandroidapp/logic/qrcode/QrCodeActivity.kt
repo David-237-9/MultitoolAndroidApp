@@ -21,13 +21,16 @@ const val QR_GENERATION_DEBOUNCE = 1000L
 
 class QrCodeActivity: ComponentActivity() {
     private var qrGeneratorJob: Job? = null
+    private val supportedSizes = listOf(128, 256, 512, 1024)
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             var qrCodeBitmap by remember { mutableStateOf<Bitmap?>(null) }
+            var inputText by remember { mutableStateOf("") }
             var selectedCorrectionLevelIndex by remember { mutableIntStateOf(1) } // Default to 15% level
+            var selectedSizeIndex by remember { mutableIntStateOf(2) } // Default to size 512
 
             fun startQrGeneration(text: String) {
                 qrGeneratorJob?.cancel()
@@ -36,6 +39,7 @@ class QrCodeActivity: ComponentActivity() {
                     qrCodeBitmap = if (text.isEmpty()) null
                     else QrCodeGenerator.generate(
                         text = text,
+                        size = supportedSizes[selectedSizeIndex],
                         errorCorrection = QrCodeGenerator.supportedErrorCorrections[selectedCorrectionLevelIndex]
                     )
                 }
@@ -43,16 +47,27 @@ class QrCodeActivity: ComponentActivity() {
 
             MultitoolAndroidAppTheme {
                 QrCodeScreen(
-                    "QR Code Tool",
-                    onTextChange = { text -> startQrGeneration(text) },
+                    title = "QR Code Tool",
+                    qrCodeBitmap = qrCodeBitmap,
+                    inputText = inputText,
+                    onTextChange = { text ->
+                        inputText = text
+                        startQrGeneration(text)
+                    },
                     correctionLevel = QrCodeGenerator.supportedErrorCorrections[selectedCorrectionLevelIndex],
-                    onCorrectionErrorLevelChange = { text ->
+                    onCorrectionErrorLevelChange = {
                         selectedCorrectionLevelIndex++
                         if (selectedCorrectionLevelIndex >= QrCodeGenerator.supportedErrorCorrections.size)
                             selectedCorrectionLevelIndex = 0
-                        startQrGeneration(text)
+                        startQrGeneration(inputText)
                     },
-                    qrCodeBitmap = qrCodeBitmap,
+                    qrSize = supportedSizes[selectedSizeIndex],
+                    onQrSizeChange = {
+                        selectedSizeIndex++
+                        if (selectedSizeIndex >= supportedSizes.size)
+                            selectedSizeIndex = 0
+                        startQrGeneration(inputText)
+                    },
                 )
             }
         }

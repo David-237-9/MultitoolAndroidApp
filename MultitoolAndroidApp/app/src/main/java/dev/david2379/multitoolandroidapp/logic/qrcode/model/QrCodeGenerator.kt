@@ -1,4 +1,3 @@
-// kotlin
 package dev.david2379.multitoolandroidapp.logic.qrcode.model
 
 import android.graphics.Bitmap
@@ -26,7 +25,7 @@ object QrCodeGenerator {
         margin: Int = 1,
         errorCorrection: Int = 15
     ): Bitmap {
-        require(text.isNotEmpty()) { "text must not be empty" }
+        require(text.isNotEmpty()) { "Text must not be empty" }
 
         val errorCorrectionLevel = when (errorCorrection) {
             7 -> ErrorCorrectionLevel.L // 7% error recovery

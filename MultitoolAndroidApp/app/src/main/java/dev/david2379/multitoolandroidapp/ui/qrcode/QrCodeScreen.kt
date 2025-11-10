@@ -14,10 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -27,10 +23,13 @@ import dev.david2379.multitoolandroidapp.ui.general.TopBar
 @Composable
 fun QrCodeScreen(
     title: String,
-    onTextChange: (text: String) -> Unit,
-    correctionLevel: Int,
-    onCorrectionErrorLevelChange: (text: String) -> Unit,
     qrCodeBitmap: Bitmap?,
+    inputText: String,
+    onTextChange: (String) -> Unit,
+    correctionLevel: Int,
+    onCorrectionErrorLevelChange: () -> Unit,
+    qrSize: Int,
+    onQrSizeChange: () -> Unit,
 ) {
     Scaffold(
         topBar = { TopBar(title) }
@@ -42,7 +41,14 @@ fun QrCodeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            DataInput(onTextChange, correctionLevel, onCorrectionErrorLevelChange)
+            DataInput(
+                inputText,
+                onTextChange,
+                correctionLevel,
+                onCorrectionErrorLevelChange,
+                qrSize,
+                onQrSizeChange,
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -53,25 +59,28 @@ fun QrCodeScreen(
 
 @Composable
 private fun DataInput(
-    onTextChange: (text: String) -> Unit,
+    inputText: String,
+    onTextChange: (String) -> Unit,
     correctionLevel: Int,
-    onCorrectionErrorLevelChange: (text: String) -> Unit,
+    onCorrectionErrorLevelChange: () -> Unit,
+    qrSize: Int,
+    onQrSizeChange: () -> Unit,
 ) {
-    var inputText by remember { mutableStateOf("") }
-
     TextField(
         value = inputText,
-        onValueChange = {
-            inputText = it
-            onTextChange(it)
-        },
+        onValueChange = onTextChange,
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
     )
-    Button(onClick = { onCorrectionErrorLevelChange(inputText) }) {
+    Button(onClick = { onCorrectionErrorLevelChange() }) {
         Text("Error Correction: $correctionLevel%")
     }
+    /*
+    Button(onClick = { onQrSizeChange() }) {
+        Text("Size: ${qrSize}x${qrSize}")
+    }
+    */
 }
 
 @Composable
