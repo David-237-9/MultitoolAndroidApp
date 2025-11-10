@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import dev.david2379.multitoolandroidapp.logic.camera.CameraActivity
 import dev.david2379.multitoolandroidapp.logic.gps.GpsActivity
 import dev.david2379.multitoolandroidapp.logic.morseFlash.MorseFlashActivity
+import dev.david2379.multitoolandroidapp.logic.qrcode.QrCodeActivity
 import dev.david2379.multitoolandroidapp.ui.MainScreen
 import dev.david2379.multitoolandroidapp.ui.theme.MultitoolAndroidAppTheme
 
@@ -26,6 +27,10 @@ class MainActivity : ComponentActivity() {
             Intent(this, GpsActivity::class.java)
         }
 
+        val navigateToQrCodeIntent: Intent by lazy {
+            Intent(this, QrCodeActivity::class.java)
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -35,6 +40,7 @@ class MainActivity : ComponentActivity() {
                         Pair("Camera") { startActivity(navigateToCameraIntent) },
                         Pair("Morse Flash") { startActivity(navigateToMorseFlashIntent) },
                         Pair("GPS") { startActivity(navigateToGpsIntent) },
+                        Pair("QR Code") { startActivity(navigateToQrCodeIntent) },
                     ),
                 )
             }

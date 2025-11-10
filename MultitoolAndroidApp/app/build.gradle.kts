@@ -45,7 +45,6 @@ dependencies {
     // The following line is optional, as the core library is included indirectly by camera-camera2
     implementation("androidx.camera:camera-core:${cameraxVersion}")
     implementation("androidx.camera:camera-camera2:${cameraxVersion}")
-
     // Optional - CameraX Lifecycle Library
     implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
     // implementation("androidx.camera:camera-video:${cameraxVersion}")
@@ -53,7 +52,11 @@ dependencies {
     // implementation("androidx.camera:camera-mlkit-vision:${cameraxVersion}")
     // implementation("androidx.camera:camera-extensions:${cameraxVersion}")
 
+    // Google Play Services Location
     implementation("com.google.android.gms:play-services-location:21.2.0")
+
+    // BitMap QR code generator library
+    implementation("com.google.zxing:core:3.5.2")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

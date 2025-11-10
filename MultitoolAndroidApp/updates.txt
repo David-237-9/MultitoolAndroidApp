@@ -2,6 +2,9 @@
 This file contains the history of the changes made to the application.
 
 
+----- 10/11/2025 -----
+- Created the QR Code tool
+
 ----- 09/10/2025 -----
 - Morse Flash Decoder
 

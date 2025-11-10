@@ -33,6 +33,7 @@
         <activity android:name=".logic.morseFlash.MorseFlashActivity" />
         <activity android:name=".logic.morseFlash.ReadMorseFlashActivity" />
         <activity android:name=".logic.gps.GpsActivity" />
+        <activity android:name=".logic.qrcode.QrCodeActivity" />
     </application>
 
 </manifest>
