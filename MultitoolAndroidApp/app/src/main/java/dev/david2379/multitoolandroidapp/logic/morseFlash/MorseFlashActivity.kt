@@ -41,7 +41,6 @@ class MorseFlashActivity: ComponentActivity() {
                         { flashHelper.turnOffFlash() },
                         { !state.second },
                     )
-                    morseJob?.cancel()
                 }
             }
 
@@ -49,6 +48,7 @@ class MorseFlashActivity: ComponentActivity() {
                 state = Pair(text.trim(), active)
                 if (active && state.first.isNotBlank()) startMorseJob() else {
                     morseJob?.cancel()
+                    morseJob = null
                     flashHelper.turnOffFlash()
                 }
             }
