@@ -13,9 +13,8 @@ object LocationPermission {
      * Initialize location permission by checking and requesting if not granted
      */
     fun init(activity: Activity) {
-        if (hasFineLocationPermission(activity)) {
+        if (!hasFineLocationPermission(activity))
             requestLocationPermission(activity)
-        }
     }
 
     /**
@@ -23,7 +22,7 @@ object LocationPermission {
      */
     private fun hasFineLocationPermission(activity: Activity): Boolean =
         (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
+                == PackageManager.PERMISSION_GRANTED)
 
     /**
      * Request location permission

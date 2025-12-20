@@ -2,59 +2,96 @@ package dev.david2379.multitoolandroidapp.logic.gps.model
 
 import android.Manifest
 import android.app.Activity
+import android.os.Build
+import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import com.google.android.gms.location.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class GPSLocationGetter(activity: Activity) {
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+const val SPEED_LIST_SIZE = 5
 
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    fun getLocation(onResult: (GPSLocation?) -> Unit, lastLocation: GPSLocation?) {
-        fusedLocationClient.getCurrentLocation(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            null
-        ).addOnSuccessListener { successLocation ->
-            if (successLocation != null) {
-                val currentTime = System.currentTimeMillis()
-                onResult(
-                    GPSLocation(
-                        currentTime,
+class GPSLocationGetter(private val activity: Activity) {
+
+    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+    private var lastLocation: GPSLocation? = null
+    private var onUpdate: ((GPSLocation?) -> Unit)? = null
+
+    private val locationCallback = object : LocationCallback() {
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onLocationResult(result: LocationResult) {
+            val successLocation = result.lastLocation ?: return
+            val currentTime = System.currentTimeMillis()
+
+            val calculatedSpeed = lastLocation?.let { meterSecondToKilometerHour(
+                calculateSpeed(
+                    manuallyCalcLocationsDistance(
                         successLocation.latitude,
                         successLocation.longitude,
-                        successLocation.speed,
-                        if (lastLocation != null) calculateSpeed(
-                            calcLocationsDistance(
-                                successLocation.latitude,
-                                successLocation.longitude,
-                                lastLocation.latitude,
-                                lastLocation.longitude,
-                            ),
-                            currentTime - lastLocation.timestamp
-                        ) else 0f,
-                        if (lastLocation != null) meterSecondToKilometerHour(
-                            calculateSpeed(
-                                manuallyCalcLocationsDistance(
-                                    successLocation.latitude,
-                                    successLocation.longitude,
-                                    lastLocation.latitude,
-                                    lastLocation.longitude,
-                                ),
-                                currentTime - lastLocation.timestamp
-                            )
-                        ) else 0f,
-                    )
+                        it.latitude,
+                        it.longitude,
+                    ),
+                    currentTime - it.timestamp
                 )
-            } else {
-                onResult(null)
-            }
-        }.addOnFailureListener { exception ->
-            onResult(null)
+            ) } ?: 0f
+
+            val calculatedSpeedList = lastLocation?.calculatedSpeedList?.let {
+                if (it.size >= SPEED_LIST_SIZE) it.drop(1) + calculatedSpeed
+                else it + calculatedSpeed
+            } ?: listOf(calculatedSpeed)
+
+            val averageSpeed = if (calculatedSpeedList.isNotEmpty()) {
+                calculatedSpeedList.sum() / calculatedSpeedList.size
+            } else 0f
+
+            val newLocation = GPSLocation(currentTime,
+                successLocation.latitude,
+                successLocation.longitude,
+                successLocation.altitude,
+                successLocation.verticalAccuracyMeters,
+                calculatedSpeed,
+                calculatedSpeedList,
+                averageSpeed,
+            )
+
+            lastLocation = newLocation
+            onUpdate?.invoke(newLocation)
         }
+    }
+
+    /**
+     * Start continuous GPS updates.
+     * The callback returns fine-grained GPS location with speed calculations.
+     */
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    fun startLocationUpdates(onResult: (GPSLocation?) -> Unit) {
+        this.onUpdate = onResult
+
+        val request = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            1000L // update interval in ms
+        )
+            .setWaitForAccurateLocation(true) // ensures GPS fix
+            .setMinUpdateIntervalMillis(500L)
+            .setMaxUpdateDelayMillis(0L)
+            .build()
+
+        fusedLocationClient.requestLocationUpdates(
+            request,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    /**
+     * Stop GPS updates to save battery.
+     */
+    fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        onUpdate = null
     }
 
     /**
@@ -66,21 +103,6 @@ class GPSLocationGetter(activity: Activity) {
     }
 
     private fun meterSecondToKilometerHour(speed: Float): Float = speed * 3.6f
-
-    private fun calcLocationsDistance(
-        latitude1: Double,
-        longitude1: Double,
-        latitude2: Double,
-        longitude2: Double,
-    ): Float {
-        val results = FloatArray(1)
-        android.location.Location.distanceBetween(
-            latitude1, longitude1,
-            latitude2, longitude2,
-            results
-        )
-        return results[0]
-    }
 
     private fun manuallyCalcLocationsDistance(
         latitude1: Double,

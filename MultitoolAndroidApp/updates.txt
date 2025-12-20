@@ -2,6 +2,9 @@
 This file contains the history of the changes made to the application.
 
 
+----- 20/12/2025 -----
+- Updated the gps functionality to meet the new implementation of the GPSAndroidApp project
+
 ----- 10/11/2025 -----
 - Created the QR Code tool;
 - Minor changes

@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import dev.david2379.multitoolandroidapp.logic.gps.model.GPSLocation
 import dev.david2379.multitoolandroidapp.logic.gps.model.GPSLocationGetter
 import dev.david2379.multitoolandroidapp.logic.gps.model.LocationPermission
-import dev.david2379.multitoolandroidapp.ui.gps.GpsScreen
 import dev.david2379.multitoolandroidapp.ui.theme.MultitoolAndroidAppTheme
+import dev.david2379.multitoolandroidapp.ui.gps.GpsScreen
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,24 +30,23 @@ class GpsActivity : ComponentActivity() {
 
         setContent {
             var gpsLocation by remember { mutableStateOf<GPSLocation?>(null) }
+            var counter by remember { mutableStateOf(0) }
 
-            fun startRefreshJob () {
+            fun startRefreshJob() {
+                // Cancel any existing job just in case
                 refreshGpsJob?.cancel()
-                refreshGpsJob = lifecycleScope.launch { // Start a coroutine to refresh GPS data
-                    val startTime = System.currentTimeMillis()
-                    gpsData.getLocation(
-                        onResult = { newLocation ->
+
+                // Start a coroutine to subscribe to GPS updates
+                refreshGpsJob = lifecycleScope.launch {
+                    gpsData.startLocationUpdates { newLocation ->
+                        if (newLocation != null) {
+                            println("NEW LOCATION #${++counter} ${System.currentTimeMillis()}")
                             gpsLocation = newLocation
-                            val waitTime = GPS_REFRESH_RATE_MS - (System.currentTimeMillis() - startTime)
-                            lifecycleScope.launch {
-                                if (waitTime > 0) delay(waitTime)
-                                startRefreshJob()
-                            }
-                        },
-                        gpsLocation,
-                    )
+                        }
+                    }
                 }
             }
+            println("STARTING GPS REFRESH " + System.currentTimeMillis())
             startRefreshJob()
 
             MultitoolAndroidAppTheme {
