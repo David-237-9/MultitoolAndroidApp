@@ -7,6 +7,8 @@ import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.google.android.gms.location.*
+import kotlin.compareTo
+import kotlin.div
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -19,6 +21,8 @@ class GPSLocationGetter(private val activity: Activity) {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
     private var lastLocation: GPSLocation? = null
     private var onUpdate: ((GPSLocation?) -> Unit)? = null
+
+    private val satelliteCounter = GPSSatelliteCounter(activity)
 
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.O)
@@ -55,6 +59,7 @@ class GPSLocationGetter(private val activity: Activity) {
                 calculatedSpeed,
                 calculatedSpeedList,
                 averageSpeed,
+                satelliteCounter.getSatelliteCount()
             )
 
             lastLocation = newLocation
@@ -84,6 +89,8 @@ class GPSLocationGetter(private val activity: Activity) {
             locationCallback,
             Looper.getMainLooper()
         )
+
+        satelliteCounter.startSatelliteListener()
     }
 
     /**

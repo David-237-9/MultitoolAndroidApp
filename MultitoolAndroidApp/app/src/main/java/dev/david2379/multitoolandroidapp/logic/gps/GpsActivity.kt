@@ -13,10 +13,7 @@ import dev.david2379.multitoolandroidapp.logic.gps.model.LocationPermission
 import dev.david2379.multitoolandroidapp.ui.theme.MultitoolAndroidAppTheme
 import dev.david2379.multitoolandroidapp.ui.gps.GpsScreen
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-const val GPS_REFRESH_RATE_MS = 500L
 
 class GpsActivity : ComponentActivity() {
     private var refreshGpsJob: Job? = null
@@ -40,13 +37,11 @@ class GpsActivity : ComponentActivity() {
                 refreshGpsJob = lifecycleScope.launch {
                     gpsData.startLocationUpdates { newLocation ->
                         if (newLocation != null) {
-                            println("NEW LOCATION #${++counter} ${System.currentTimeMillis()}")
                             gpsLocation = newLocation
                         }
                     }
                 }
             }
-            println("STARTING GPS REFRESH " + System.currentTimeMillis())
             startRefreshJob()
 
             MultitoolAndroidAppTheme {
